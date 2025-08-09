@@ -1,0 +1,58 @@
+<!-- save as index.html and open in browser -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Tiny Weather App</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;display:flex;min-height:100vh;align-items:center;justify-content:center;background:#f0f4f8}
+    .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(20,40,80,.08);width:320px;text-align:center}
+    input{width:100%;padding:8px;margin:8px 0;border:1px solid #ddd;border-radius:8px}
+    button{padding:8px 12px;border:none;border-radius:8px;cursor:pointer}
+    img{width:80px;height:80px}
+    .muted{color:#556}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Weather</h2>
+    <input id="city" placeholder="Enter city (e.g. London)" value="Mumbai" />
+    <button id="go">Get</button>
+    <div id="out" style="margin-top:12px">
+      <div class="muted">No data yet</div>
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = 'YOUR_API_KEY'; // ← get one from https://openweathermap.org/api
+    const elCity = document.getElementById('city');
+    const btn = document.getElementById('go');
+    const out = document.getElementById('out');
+
+    async function fetchWeather(city){
+      try{
+        out.innerHTML = '<div class="muted">Loading…</div>';
+        const url = https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${API_KEY};
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('City not found');
+        const d = await res.json();
+        // minimal display
+        out.innerHTML = `
+          <img src="https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png" alt="${d.weather[0].description}">
+          <div><strong>${d.name}, ${d.sys.country}</strong></div>
+          <div style="font-size:22px">${Math.round(d.main.temp)}°C — ${d.weather[0].main}</div>
+          <div class="muted">Feels like ${Math.round(d.main.feels_like)}°C • Hum ${d.main.humidity}%</div>
+        `;
+      }catch(err){
+        out.innerHTML = <div style="color:#b00020">${err.message}</div>;
+      }
+    }
+
+    btn.addEventListener('click', ()=> fetchWeather(elCity.value.trim()));
+    elCity.addEventListener('keydown', e => { if(e.key === 'Enter') fetchWeather(elCity.value.trim()) });
+
+    // optional: load default
+    fetchWeather(elCity.value.trim());
+  </script>
+</body>
+</html>
