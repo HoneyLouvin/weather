@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="weather-container">
+        <h1>Weather App</h1>
+        
+        <div class="input-container">
+            <input type="text" id="city" placeholder="Enter City Name">
+            <button onclick="getWeather()">Get Weather</button>
+        </div>
+        
+        <div id="weather-info">
+            <h2 id="city-name"></h2>
+            <p id="temperature"></p>
+            <p id="description"></p>
+            <p id="humidity"></p>
+            <p id="wind-speed"></p>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "YOUR_API_KEY"; // Get your API key from OpenWeatherMap or other weather service
+
+        async function getWeather() {
+            const city = document.getElementById("city").value;
+            const weatherData = await fetchWeatherData(city);
+            
+            if (weatherData) {
+                displayWeather(weatherData);
+            } else {
+                alert("City not found!");
+            }
+        }
+
+        async function fetchWeatherData(city) {
+            const url = https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.cod === "404") {
+                    return null;
+                }
+                return data;
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        }
+
+        function displayWeather(data) {
+            document.getElementById("city-name").textContent = ${data.name}, ${data.sys.country};
+            document.getElementById("temperature").textContent = Temperature: ${data.main.temp} °C;
+            document.getElementById("description").textContent = Description: ${data.weather[0].description};
+            document.getElementById("humidity").textContent = Humidity: ${data.main.humidity}%;
+            document.getElementById("wind-speed").textContent = Wind Speed: ${data.wind.speed} m/s;
+        }
+    </script>
+</body>
+</html>
